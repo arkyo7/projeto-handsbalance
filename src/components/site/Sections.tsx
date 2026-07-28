@@ -166,9 +166,16 @@ export function Hero() {
           </ul>
         </div>
 
-        <div className="relative">
-          <ImagePlaceholder className="aspect-[4/5] max-h-[34rem]" />
+        <div className="relative order-last">
+          <img
+            src="/images/hands-balance/ana-laura-hero.webp"
+            alt={t("hero.imageAlt")}
+            width={1000}
+            height={1250}
+            className="aspect-[4/5] max-h-[34rem] w-full rounded-3xl object-cover object-[50%_25%] shadow-lift"
+          />
         </div>
+
       </div>
     </section>
   );
@@ -307,7 +314,15 @@ export function AboutSection({ data }: { data: PublicSiteData }) {
   return (
     <Section tone="cream" id="about">
       <div className="grid items-center gap-12 lg:grid-cols-2">
-        <ImagePlaceholder className="aspect-[4/5] max-h-[32rem]" />
+        <img
+          src="/images/hands-balance/ana-laura-treatment.webp"
+          alt={t("about.imageAlt")}
+          loading="lazy"
+          width={900}
+          height={1125}
+          className="aspect-[4/5] max-h-[32rem] w-full rounded-3xl object-cover shadow-soft"
+        />
+
         <div>
           <SectionHeading align="left" eyebrow="About" title={t("about.title")} />
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">
@@ -462,7 +477,15 @@ export function GiftCardSection({ data }: { data: PublicSiteData }) {
             <Link to="/contact">{t("cta.buyGiftCard")}</Link>
           </Button>
         </div>
-        <ImagePlaceholder className="aspect-[16/10]" label="Gift card visual to be added." />
+        <img
+          src="/images/hands-balance/hands-balance-gift-card.webp"
+          alt={t("gift.imageAlt")}
+          loading="lazy"
+          width={1000}
+          height={625}
+          className="aspect-[16/10] w-full rounded-3xl object-cover shadow-soft"
+        />
+
       </div>
     </Section>
   );
