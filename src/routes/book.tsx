@@ -115,9 +115,9 @@ function BookPage() {
   });
 
   const createBookingFn = useServerFn(createBooking);
+  type BookingPayload = Parameters<typeof createBookingFn>[0] extends { data: infer D } ? D : never;
   const mutation = useMutation({
-    mutationFn: (payload: Parameters<typeof createBooking>[0]["data"]) =>
-      createBookingFn({ data: payload }),
+    mutationFn: (payload: BookingPayload) => createBookingFn({ data: payload }),
     onSuccess: (res) => {
       setResult({ reference: res.reference, manageToken: res.manageToken });
       setStep(3);
