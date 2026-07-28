@@ -314,7 +314,15 @@ export function AboutSection({ data }: { data: PublicSiteData }) {
   return (
     <Section tone="cream" id="about">
       <div className="grid items-center gap-12 lg:grid-cols-2">
-        <ImagePlaceholder className="aspect-[4/5] max-h-[32rem]" />
+        <img
+          src="/images/hands-balance/ana-laura-treatment.webp"
+          alt={t("about.imageAlt")}
+          loading="lazy"
+          width={900}
+          height={1125}
+          className="aspect-[4/5] max-h-[32rem] w-full rounded-3xl object-cover shadow-soft"
+        />
+
         <div>
           <SectionHeading align="left" eyebrow="About" title={t("about.title")} />
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">
