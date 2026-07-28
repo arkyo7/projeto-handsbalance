@@ -276,6 +276,7 @@ export type Database = {
           show_business_hours: boolean
           slot_interval_minutes: number
           timezone: string
+          translations: Json
           updated_at: string
           whatsapp_number: string | null
         }
@@ -316,6 +317,7 @@ export type Database = {
           show_business_hours?: boolean
           slot_interval_minutes?: number
           timezone?: string
+          translations?: Json
           updated_at?: string
           whatsapp_number?: string | null
         }
@@ -356,6 +358,7 @@ export type Database = {
           show_business_hours?: boolean
           slot_interval_minutes?: number
           timezone?: string
+          translations?: Json
           updated_at?: string
           whatsapp_number?: string | null
         }
@@ -444,6 +447,7 @@ export type Database = {
           language: string
           question: string
           sort_order: number
+          translations: Json
           updated_at: string
         }
         Insert: {
@@ -454,6 +458,7 @@ export type Database = {
           language?: string
           question: string
           sort_order?: number
+          translations?: Json
           updated_at?: string
         }
         Update: {
@@ -464,6 +469,7 @@ export type Database = {
           language?: string
           question?: string
           sort_order?: number
+          translations?: Json
           updated_at?: string
         }
         Relationships: []
@@ -478,6 +484,7 @@ export type Database = {
           is_featured: boolean
           is_published: boolean
           sort_order: number
+          translations: Json
         }
         Insert: {
           alt_text?: string
@@ -488,6 +495,7 @@ export type Database = {
           is_featured?: boolean
           is_published?: boolean
           sort_order?: number
+          translations?: Json
         }
         Update: {
           alt_text?: string
@@ -498,6 +506,7 @@ export type Database = {
           is_featured?: boolean
           is_published?: boolean
           sort_order?: number
+          translations?: Json
         }
         Relationships: []
       }
@@ -692,6 +701,7 @@ export type Database = {
           price_cents: number
           slug: string
           sort_order: number
+          translations: Json
           updated_at: string
         }
         Insert: {
@@ -712,6 +722,7 @@ export type Database = {
           price_cents: number
           slug: string
           sort_order?: number
+          translations?: Json
           updated_at?: string
         }
         Update: {
@@ -732,6 +743,7 @@ export type Database = {
           price_cents?: number
           slug?: string
           sort_order?: number
+          translations?: Json
           updated_at?: string
         }
         Relationships: []
