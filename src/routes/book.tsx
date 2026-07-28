@@ -115,7 +115,19 @@ function BookPage() {
   });
 
   const createBookingFn = useServerFn(createBooking);
-  type BookingPayload = Parameters<typeof createBookingFn>[0] extends { data: infer D } ? D : never;
+  type BookingPayload = {
+    serviceId: string;
+    date: string;
+    startTime: string;
+    fullName: string;
+    email: string;
+    countryCode: string;
+    phone: string;
+    comments: string;
+    preferredLanguage: LanguageCode;
+    acceptCancellation: true;
+    acceptPrivacy: true;
+  };
   const mutation = useMutation({
     mutationFn: (payload: BookingPayload) => createBookingFn({ data: payload }),
     onSuccess: (res) => {
