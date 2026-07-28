@@ -166,9 +166,16 @@ export function Hero() {
           </ul>
         </div>
 
-        <div className="relative">
-          <ImagePlaceholder className="aspect-[4/5] max-h-[34rem]" />
+        <div className="relative order-last">
+          <img
+            src="/images/hands-balance/ana-laura-hero.webp"
+            alt={t("hero.imageAlt")}
+            width={1000}
+            height={1250}
+            className="aspect-[4/5] max-h-[34rem] w-full rounded-3xl object-cover object-[50%_25%] shadow-lift"
+          />
         </div>
+
       </div>
     </section>
   );
