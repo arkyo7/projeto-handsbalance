@@ -477,7 +477,15 @@ export function GiftCardSection({ data }: { data: PublicSiteData }) {
             <Link to="/contact">{t("cta.buyGiftCard")}</Link>
           </Button>
         </div>
-        <ImagePlaceholder className="aspect-[16/10]" label="Gift card visual to be added." />
+        <img
+          src="/images/hands-balance/hands-balance-gift-card.webp"
+          alt={t("gift.imageAlt")}
+          loading="lazy"
+          width={1000}
+          height={625}
+          className="aspect-[16/10] w-full rounded-3xl object-cover shadow-soft"
+        />
+
       </div>
     </Section>
   );
