@@ -20,6 +20,7 @@ import { Route as LegalTermsRouteImport } from './routes/legal.terms'
 import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
 import { Route as LegalCookiesRouteImport } from './routes/legal.cookies'
 import { Route as LegalCancellationRouteImport } from './routes/legal.cancellation'
+import { Route as BookingTokenRouteImport } from './routes/booking.$token'
 
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
@@ -76,6 +77,11 @@ const LegalCancellationRoute = LegalCancellationRouteImport.update({
   path: '/legal/cancellation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingTokenRoute = BookingTokenRouteImport.update({
+  id: '/booking/$token',
+  path: '/booking/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/reviews': typeof ReviewsRoute
   '/services': typeof ServicesRoute
+  '/booking/$token': typeof BookingTokenRoute
   '/legal/cancellation': typeof LegalCancellationRoute
   '/legal/cookies': typeof LegalCookiesRoute
   '/legal/privacy': typeof LegalPrivacyRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/reviews': typeof ReviewsRoute
   '/services': typeof ServicesRoute
+  '/booking/$token': typeof BookingTokenRoute
   '/legal/cancellation': typeof LegalCancellationRoute
   '/legal/cookies': typeof LegalCookiesRoute
   '/legal/privacy': typeof LegalPrivacyRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/reviews': typeof ReviewsRoute
   '/services': typeof ServicesRoute
+  '/booking/$token': typeof BookingTokenRoute
   '/legal/cancellation': typeof LegalCancellationRoute
   '/legal/cookies': typeof LegalCookiesRoute
   '/legal/privacy': typeof LegalPrivacyRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/reviews'
     | '/services'
+    | '/booking/$token'
     | '/legal/cancellation'
     | '/legal/cookies'
     | '/legal/privacy'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/reviews'
     | '/services'
+    | '/booking/$token'
     | '/legal/cancellation'
     | '/legal/cookies'
     | '/legal/privacy'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/reviews'
     | '/services'
+    | '/booking/$token'
     | '/legal/cancellation'
     | '/legal/cookies'
     | '/legal/privacy'
@@ -167,6 +179,7 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   ReviewsRoute: typeof ReviewsRoute
   ServicesRoute: typeof ServicesRoute
+  BookingTokenRoute: typeof BookingTokenRoute
   LegalCancellationRoute: typeof LegalCancellationRoute
   LegalCookiesRoute: typeof LegalCookiesRoute
   LegalPrivacyRoute: typeof LegalPrivacyRoute
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalCancellationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking/$token': {
+      id: '/booking/$token'
+      path: '/booking/$token'
+      fullPath: '/booking/$token'
+      preLoaderRoute: typeof BookingTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -263,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   ReviewsRoute: ReviewsRoute,
   ServicesRoute: ServicesRoute,
+  BookingTokenRoute: BookingTokenRoute,
   LegalCancellationRoute: LegalCancellationRoute,
   LegalCookiesRoute: LegalCookiesRoute,
   LegalPrivacyRoute: LegalPrivacyRoute,

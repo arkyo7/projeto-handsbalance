@@ -270,7 +270,7 @@ export async function loadBookingByToken(token: string) {
   const { data, error } = await supabaseAdmin
     .from("appointments")
     .select(
-      "id, reference, service_name, appointment_date, start_time, end_time, duration_minutes, status, payment_status, payment_mode, price_cents, amount_due_cents, currency, timezone, customer_comments, token_expires_at, customers(full_name, email)",
+      "id, reference, service_id, service_name, appointment_date, start_time, end_time, duration_minutes, status, payment_status, payment_mode, price_cents, amount_due_cents, currency, timezone, customer_comments, token_expires_at, customers(full_name, email)",
     )
     .eq("manage_token", token)
     .maybeSingle();

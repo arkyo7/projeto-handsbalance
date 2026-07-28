@@ -57,7 +57,6 @@ function ManageBookingPage() {
   const [date, setDate] = useState<string | null>(null);
 
   const getBookingFn = useServerFn(getBooking);
-  const availabilityFn = useServerFn(getAvailability);
   const cancelFn = useServerFn(cancelBooking);
   const rescheduleFn = useServerFn(rescheduleBooking);
 
@@ -66,16 +65,6 @@ function ManageBookingPage() {
     queryFn: () => getBookingFn({ data: { token } }),
   });
   const booking = bookingQuery.data?.booking ?? null;
-
-  const availability = useQuery({
-    queryKey: ["reschedule-availability", token, date],
-    queryFn: () => availabilityFn({ data: { serviceId: serviceId!, date: date! } }),
-    enabled: false,
-  });
-
-  // The service id is not exposed publicly; rescheduling reuses the same session
-  // through the secure token endpoint instead.
-  const serviceId: string | null = null;
 
   const cancelMutation = useMutation({
     mutationFn: () => cancelFn({ data: { token } }),
