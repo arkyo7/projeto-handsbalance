@@ -377,8 +377,9 @@ const pt: Dict = {
   "footer.tagline":
     "Um espaço calmo e acolhedor dedicado à massagem terapêutica profissional em Gent.",
   "footer.navigation": "Navegação",
-  "footer.legal": "Legal",
-  "footer.contact": "Contacto",
+  "footer.legalTitle": "Jurídico",
+  "footer.navTitle": "Navegação",
+  "footer.contactTitle": "Contacto",
   "footer.privacy": "Política de Privacidade",
   "footer.terms": "Termos e Condições",
   "footer.cancellation": "Política de Cancelamento",
