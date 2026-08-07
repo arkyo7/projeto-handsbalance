@@ -8,6 +8,17 @@ import {
   type ReactNode,
 } from "react";
 
+type FooterKey =
+  | "footer.legalTitle"
+  | "footer.navTitle"
+  | "footer.contactTitle"
+  | "footer.privacy"
+  | "footer.terms"
+  | "footer.cancellation"
+  | "footer.cookies"
+  | "footer.rights"
+  | "footer.disclaimer";
+
 export const LANGUAGES = [
   { code: "en", label: "English", short: "EN" },
   { code: "nl", label: "Nederlands", short: "NL" },
