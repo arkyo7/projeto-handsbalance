@@ -1042,7 +1042,7 @@ type I18nValue = {
   language: LanguageCode;
   locale: string;
   setLanguage: (code: LanguageCode) => void;
-  t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
+  t: (key: any, vars?: Record<string, string | number>) => string;
   tr: <T extends object>(
     row: T,
     field: string,
@@ -1074,7 +1074,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const t = useCallback(
-    (key: TranslationKey, vars?: Record<string, string | number>) => {
+    (key: any, vars?: Record<string, string | number>) => {
       const raw = dictionaries[language][key] ?? en[key];
       if (!vars) return raw;
       return raw.replace(/\{(\w+)\}/g, (_, name: string) =>
@@ -1109,7 +1109,7 @@ export function useI18n() {
 }
 
 /** Keeps <title> and the meta description in sync with the selected language. */
-export function useLocalizedMeta(titleKey: TranslationKey, descriptionKey: TranslationKey) {
+export function useLocalizedMeta(titleKey: any, descriptionKey: any) {
   const { t, language } = useI18n();
   useEffect(() => {
     document.title = t(titleKey);
