@@ -840,16 +840,16 @@ const nl: Dict = {
 
   "footer.tagline":
     "Een rustige en zorgzame plek gewijd aan professionele massagetherapie in Gent.",
-  "footer.navigation": "Navigatie",
-  "footer.legal": "Juridisch",
-  "footer.contact": "Contact",
+  "footer.navTitle": "Navigatie",
+  "footer.legalTitle": "Juridisch",
+  "footer.contactTitle": "Contact",
   "footer.privacy": "Privacybeleid",
   "footer.terms": "Algemene voorwaarden",
   "footer.cancellation": "Annuleringsbeleid",
   "footer.cookies": "Cookiebeleid",
   "footer.rights": "Alle rechten voorbehouden.",
   "footer.disclaimer":
-    "Massagetherapie is een welzijnsdienst en vervangt geen medische, kinesitherapeutische of psychologische zorg.",
+    "Massagetherapie is een welzijnsdienst en vervangt geen medische, fysiotherapeutische of psychologische zorg.",
 
   "cookie.label": "Cookievoorkeuren",
   "cookie.text":
