@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { siteDataQuery } from "@/lib/site-query";
 import { createBooking, getAvailability } from "@/lib/public.functions";
-import { BUSINESS, formatDuration, formatIsoDate, formatPrice } from "@/lib/site";
+import { BUSINESS, formatPrice } from "@/lib/site";
 import { useI18n, type LanguageCode, formatDateIn, formatDurationIn, LOCALE_BY_LANGUAGE } from "@/lib/i18n";
 
 // Meta tags are now handled dynamically by useLocalizedMeta in the component or i18n helper if needed, 
@@ -209,7 +209,7 @@ function BookPage() {
               <span className="mt-2 flex flex-wrap gap-x-5 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4 text-sage" aria-hidden="true" />
-                  {formatDuration(s.duration_minutes)}
+                  {formatDurationIn(s.duration_minutes, language)}
                 </span>
                 <span className="flex items-center gap-1.5 font-medium text-primary">
                   <Euro className="h-4 w-4 text-sage" aria-hidden="true" />
