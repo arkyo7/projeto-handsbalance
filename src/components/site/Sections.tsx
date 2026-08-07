@@ -33,7 +33,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useI18n, formatDurationIn, translated } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 import {
   BUSINESS,
   INFO_SOON,
@@ -205,7 +205,7 @@ export function TrustBar() {
 }
 
 export function ServiceCard({ service, currency }: { service: Service; currency: string }) {
-  const { t, language } = useI18n();
+  const { t, formatDuration, tr } = useI18n();
   const [open, setOpen] = useState(false);
 
   return (
@@ -216,12 +216,12 @@ export function ServiceCard({ service, currency }: { service: Service; currency:
             {t("services.featured")}
           </Badge>
         ) : null}
-        <h3 className="font-display text-2xl leading-snug text-primary-deep">{translated(service, language, "name")}</h3>
+        <h3 className="font-display text-2xl leading-snug text-primary-deep">{tr(service, "name", service.name)}</h3>
 
         <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Clock className="h-4 w-4 text-sage" aria-hidden="true" />
-            {formatDurationIn(service.duration_minutes, language)}
+            {formatDuration(service.duration_minutes)}
           </span>
           <span className="flex items-center gap-1.5 font-medium text-primary">
             <Euro className="h-4 w-4 text-sage" aria-hidden="true" />
@@ -230,7 +230,7 @@ export function ServiceCard({ service, currency }: { service: Service; currency:
         </div>
 
         <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
-          {translated(service, language, "description") || t("common.infoSoon")}
+          {tr(service, "description", service.description) || t("common.infoSoon")}
         </p>
 
         <div className="mt-6 flex flex-wrap gap-2">
@@ -243,21 +243,21 @@ export function ServiceCard({ service, currency }: { service: Service; currency:
             <DialogContent className="max-w-lg">
               <DialogHeader>
                 <DialogTitle className="font-display text-2xl text-primary-deep">
-                  {translated(service, language, "name")}
+                  {tr(service, "name", service.name)}
                 </DialogTitle>
                 <DialogDescription className="flex flex-wrap gap-x-4 gap-y-1 pt-1 text-sm">
-                  <span>{formatDurationIn(service.duration_minutes, language)}</span>
+                  <span>{formatDuration(service.duration_minutes)}</span>
                   <span className="font-medium text-primary">
                     {formatPrice(service.price_cents, currency)}
                   </span>
                 </DialogDescription>
               </DialogHeader>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                {translated(service, language, "description") || t("common.infoSoon")}
+                {tr(service, "description", service.description) || t("common.infoSoon")}
               </p>
               {service.notes ? (
                 <p className="rounded-xl bg-secondary/70 p-4 text-sm leading-relaxed text-muted-foreground">
-                  {translated(service, language, "notes")}
+                  {tr(service, "notes", service.notes)}
                 </p>
               ) : null}
               {service.is_bookable ? (
@@ -302,7 +302,7 @@ export function ServicesSection({ data }: { data: PublicSiteData }) {
 }
 
 export function AboutSection({ data }: { data: PublicSiteData }) {
-  const { t, language } = useI18n();
+  const { t, tr } = useI18n();
   const values = [
     { icon: HandHeart, label: t("about.value1") },
     { icon: Sparkles, label: t("about.value2") },
@@ -325,7 +325,7 @@ export function AboutSection({ data }: { data: PublicSiteData }) {
         <div>
           <SectionHeading align="left" eyebrow={t("about.eyebrow")} title={t("about.title")} />
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-            {translated(data.settings, language, "about_text") || t("common.infoSoon")}
+            {tr(data.settings, "about_text", data.settings.about_text) || t("common.infoSoon")}
           </p>
 
           <ul className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -342,7 +342,7 @@ export function AboutSection({ data }: { data: PublicSiteData }) {
 
           {data.settings.practitioner_bio ? (
             <p className="mt-8 text-sm leading-relaxed text-muted-foreground">
-              {translated(data.settings, language, "practitioner_bio")}
+              {tr(data.settings, "practitioner_bio", data.settings.practitioner_bio)}
             </p>
           ) : (
             <p className="mt-8 rounded-2xl border border-dashed border-primary/25 bg-background/60 p-4 text-sm text-muted-foreground">
@@ -356,7 +356,7 @@ export function AboutSection({ data }: { data: PublicSiteData }) {
 }
 
 export function GallerySection({ data }: { data: PublicSiteData }) {
-  const { t, language } = useI18n();
+  const { t, tr } = useI18n();
   const [active, setActive] = useState<number | null>(null);
   const images = data.gallery;
 
@@ -380,7 +380,7 @@ export function GallerySection({ data }: { data: PublicSiteData }) {
             >
               <img
                 src={img.image_url}
-                alt={translated(img, language, "alt_text") || "Hands & Balance Wellness Center"}
+                alt={tr(img, "alt_text", img.alt_text) || "Hands & Balance Wellness Center"}
                 loading="lazy"
                 width={800}
                 height={600}
@@ -397,7 +397,7 @@ export function GallerySection({ data }: { data: PublicSiteData }) {
           {active !== null && images[active] ? (
             <img
               src={images[active].image_url}
-              alt={translated(images[active], language, "alt_text") || "Hands & Balance Wellness Center"}
+              alt={tr(images[active], "alt_text", images[active].alt_text) || "Hands & Balance Wellness Center"}
               className="h-auto w-full rounded-xl"
             />
           ) : null}
@@ -455,7 +455,7 @@ export function ReviewsSection({ data }: { data: PublicSiteData }) {
 }
 
 export function GiftCardSection({ data }: { data: PublicSiteData }) {
-  const { t, language } = useI18n();
+  const { t, tr } = useI18n();
   const gift = data.services.find((s) => s.slug === "gift-card");
 
   return (
@@ -469,7 +469,7 @@ export function GiftCardSection({ data }: { data: PublicSiteData }) {
             </p>
           ) : null}
           <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-            {translated(data.settings, language, "gift_card_rules") ||
+            {tr(data.settings, "gift_card_rules", data.settings.gift_card_rules) ||
               t("gift.rulesSoon")}
           </p>
           <Button asChild size="lg" className="mt-8 h-12 rounded-full px-7">
