@@ -455,7 +455,7 @@ function BookPage() {
                 {t("booking.manage")}
               </Button>
               <Button asChild variant="outline" className="rounded-full border-primary/30 px-6">
-                <Link to="/">Back to home</Link>
+                <Link to="/">{t("common.backHome")}</Link>
               </Button>
             </div>
           </CardContent>
@@ -474,17 +474,18 @@ function SummaryBar({
   service: { name: string; duration_minutes: number; price_cents: number };
   currency: string;
   date?: string;
-  time?: string;
+  time?: string | null;
 }) {
+  const { language } = useI18n();
   return (
     <div className="rounded-2xl border border-border bg-secondary/60 p-5">
       <p className="font-display text-xl text-primary-deep">{service.name}</p>
       <p className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
-        <span>{formatDuration(service.duration_minutes)}</span>
+        <span>{formatDurationIn(service.duration_minutes, language)}</span>
         <span className="font-medium text-primary">{formatPrice(service.price_cents, currency)}</span>
         {date && time ? (
           <span>
-            {formatIsoDate(date)} · {time}
+            {formatDateIn(date, language)} · {time}
           </span>
         ) : null}
       </p>
