@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { cancelBooking, getAvailability, getBooking, rescheduleBooking } from "@/lib/public.functions";
 import { BUSINESS, formatPrice, shortTime } from "@/lib/site";
-import { useI18n, formatDateIn, formatDurationIn, LOCALE_BY_LANGUAGE } from "@/lib/i18n";
+import { useI18n, formatDateIn, formatDurationIn, LOCALE_BY_LANGUAGE, type LanguageCode } from "@/lib/i18n";
 
 export const Route = createFileRoute("/booking/$token")({
   head: () => ({
@@ -238,7 +238,7 @@ function ReschedulePanel({
   pending: boolean;
   onConfirm: (date: string, time: string) => void;
   token: string;
-  language: any;
+  language: LanguageCode;
   t: (key: any, params?: any) => string;
 }) {
   const [time, setTime] = useState<string | null>(null);
@@ -280,11 +280,11 @@ function ReschedulePanel({
               }`}
             >
               <span className="text-[0.7rem] uppercase tracking-wide opacity-80">
-                {dt.toLocaleDateString(LOCALE_BY_LANGUAGE[language], { weekday: "short" })}
+                {dt.toLocaleDateString(LOCALE_BY_LANGUAGE[language as LanguageCode], { weekday: "short" })}
               </span>
               <span className="font-display text-xl">{dt.getDate()}</span>
               <span className="text-[0.7rem] opacity-80">
-                {dt.toLocaleDateString(LOCALE_BY_LANGUAGE[language], { month: "short" })}
+                {dt.toLocaleDateString(LOCALE_BY_LANGUAGE[language as LanguageCode], { month: "short" })}
               </span>
             </button>
           );
