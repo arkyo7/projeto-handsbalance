@@ -14,9 +14,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { siteDataQuery } from "@/lib/site-query";
 import { createBooking, getAvailability } from "@/lib/public.functions";
-import { BUSINESS, formatDuration, formatIsoDate, formatPrice } from "@/lib/site";
-import { useI18n, type LanguageCode } from "@/lib/i18n";
+import { BUSINESS, formatPrice } from "@/lib/site";
+import { useI18n, type LanguageCode, formatDateIn, formatDurationIn, LOCALE_BY_LANGUAGE } from "@/lib/i18n";
 
+// Meta tags are now handled dynamically by useLocalizedMeta in the component or i18n helper if needed, 
+// but we keep these as fallbacks.
 const title = "Book a Massage Session Online | Hands & Balance Gent";
 const description =
   "Choose your massage session, pick a date and time and confirm your booking online at Hands & Balance Wellness Center in Gent.";
@@ -51,15 +53,23 @@ function nextDays(count: number) {
   });
 }
 
-const STEPS = ["Session", "Date & time", "Your details", "Confirmation"];
+// Labels are now handled via t() keys: booking.step.*
 
 function Stepper({ step }: { step: number }) {
+  const { t } = useI18n();
+  const steps = [
+    { key: "booking.step.service", label: t("booking.step.service") },
+    { key: "booking.step.datetime", label: t("booking.step.datetime") },
+    { key: "booking.step.details", label: t("booking.step.details") },
+    { key: "booking.step.confirmation", label: t("booking.step.confirmation") },
+  ];
+
   return (
     <ol className="mb-10 grid grid-cols-4 gap-2">
-      {STEPS.map((label, i) => {
+      {steps.map((s, i) => {
         const state = i < step ? "done" : i === step ? "current" : "todo";
         return (
-          <li key={label} className="flex flex-col gap-2">
+          <li key={s.key} className="flex flex-col gap-2">
             <span
               className={`h-1.5 w-full rounded-full ${
                 state === "todo" ? "bg-border" : "bg-primary"
@@ -70,7 +80,7 @@ function Stepper({ step }: { step: number }) {
                 state === "current" ? "font-medium text-primary-deep" : "text-muted-foreground"
               }`}
             >
-              {label}
+              {s.label}
             </span>
           </li>
         );
@@ -83,7 +93,7 @@ function BookPage() {
   const { data } = useSuspenseQuery(siteDataQuery);
   const search = Route.useSearch();
   const navigate = useNavigate();
-  const { language } = useI18n();
+  const { language, t } = useI18n();
 
   const bookable = data.services.filter((s) => s.is_bookable);
   const [serviceId, setServiceId] = useState<string | null>(
@@ -145,11 +155,11 @@ function BookPage() {
 
   const submit = () => {
     if (!service || !date || !time) return;
-    if (form.fullName.trim().length < 2) return toast.error("Please enter your full name.");
-    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return toast.error("Please enter a valid email address.");
-    if (form.phone.trim().length < 5) return toast.error("Please enter a valid phone number.");
+    if (form.fullName.trim().length < 2) return toast.error(t("booking.errName"));
+    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return toast.error(t("booking.errEmail"));
+    if (form.phone.trim().length < 5) return toast.error(t("booking.errPhone"));
     if (!form.acceptCancellation || !form.acceptPrivacy)
-      return toast.error("Please accept the cancellation and privacy policies.");
+      return toast.error(t("booking.errAccept"));
 
     mutation.mutate({
       serviceId: service.id,
@@ -168,9 +178,9 @@ function BookPage() {
 
   return (
     <div className="container-page max-w-3xl py-12 sm:py-16">
-      <h1 className="font-display text-4xl text-primary-deep sm:text-5xl">Book Your Session</h1>
+      <h1 className="font-display text-4xl text-primary-deep sm:text-5xl">{t("booking.title")}</h1>
       <p className="mt-3 text-sm text-muted-foreground">
-        All times are shown in local time ({BUSINESS.timezone.replace("_", " ")}).
+        {t("booking.timezone", { tz: BUSINESS.timezone.replace("_", " ") })}
       </p>
 
       <div className="mt-10">
@@ -199,7 +209,7 @@ function BookPage() {
               <span className="mt-2 flex flex-wrap gap-x-5 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4 text-sage" aria-hidden="true" />
-                  {formatDuration(s.duration_minutes)}
+                  {formatDurationIn(s.duration_minutes, language)}
                 </span>
                 <span className="flex items-center gap-1.5 font-medium text-primary">
                   <Euro className="h-4 w-4 text-sage" aria-hidden="true" />
@@ -215,7 +225,7 @@ function BookPage() {
         <div>
           <SummaryBar service={service} currency={data.settings.currency} />
 
-          <h2 className="mt-8 font-display text-2xl text-primary-deep">Choose a date</h2>
+          <h2 className="mt-8 font-display text-2xl text-primary-deep">{t("booking.chooseDate")}</h2>
           <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
             {days.map((d) => {
               const dt = new Date(`${d}T00:00:00`);
@@ -235,11 +245,11 @@ function BookPage() {
                   }`}
                 >
                   <span className="text-[0.7rem] uppercase tracking-wide opacity-80">
-                    {dt.toLocaleDateString("en-GB", { weekday: "short" })}
+                    {dt.toLocaleDateString(LOCALE_BY_LANGUAGE[language], { weekday: "short" })}
                   </span>
                   <span className="font-display text-xl">{dt.getDate()}</span>
                   <span className="text-[0.7rem] opacity-80">
-                    {dt.toLocaleDateString("en-GB", { month: "short" })}
+                    {dt.toLocaleDateString(LOCALE_BY_LANGUAGE[language], { month: "short" })}
                   </span>
                 </button>
               );
@@ -249,12 +259,11 @@ function BookPage() {
           {date ? (
             <div className="mt-8">
               <h2 className="font-display text-2xl text-primary-deep">
-                Available times · {formatIsoDate(date)}
+                {t("booking.availableTimes")} · {formatDateIn(date, language)}
               </h2>
               {availability.isLoading ? (
                 <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Checking
-                  availability…
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> {t("booking.checking")}
                 </p>
               ) : availability.data && availability.data.slots.length > 0 ? (
                 <div className="mt-4 grid grid-cols-3 gap-2.5 sm:grid-cols-5">
@@ -275,7 +284,7 @@ function BookPage() {
                 </div>
               ) : (
                 <p className="mt-4 rounded-2xl border border-dashed border-primary/25 bg-secondary/50 p-5 text-sm text-muted-foreground">
-                  No availability on this day. Please choose another date, or contact us directly.
+                  {t("booking.noAvailability")}
                 </p>
               )}
             </div>
@@ -283,10 +292,10 @@ function BookPage() {
 
           <div className="mt-10 flex justify-between gap-3">
             <Button variant="ghost" className="rounded-full" onClick={() => go(0)}>
-              <ChevronLeft className="mr-1 h-4 w-4" aria-hidden="true" /> Back
+              <ChevronLeft className="mr-1 h-4 w-4" aria-hidden="true" /> {t("common.back")}
             </Button>
             <Button className="rounded-full px-7" disabled={!time} onClick={() => go(2)}>
-              Continue
+              {t("common.continue")}
             </Button>
           </div>
         </div>
@@ -304,7 +313,7 @@ function BookPage() {
             }}
           >
             <div className="grid gap-2">
-              <Label htmlFor="fullName">Full name</Label>
+              <Label htmlFor="fullName">{t("booking.fullName")}</Label>
               <Input
                 id="fullName"
                 maxLength={100}
@@ -314,7 +323,7 @@ function BookPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("booking.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -326,7 +335,7 @@ function BookPage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-[8rem_1fr]">
               <div className="grid gap-2">
-                <Label htmlFor="countryCode">Country code</Label>
+                <Label htmlFor="countryCode">{t("booking.countryCode")}</Label>
                 <Input
                   id="countryCode"
                   maxLength={6}
@@ -336,7 +345,7 @@ function BookPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="phone">Phone number</Label>
+                <Label htmlFor="phone">{t("booking.phone")}</Label>
                 <Input
                   id="phone"
                   inputMode="tel"
@@ -348,12 +357,12 @@ function BookPage() {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="comments">Comments (optional)</Label>
+              <Label htmlFor="comments">{t("booking.comments")}</Label>
               <Textarea
                 id="comments"
                 rows={4}
                 maxLength={1000}
-                placeholder="Anything we should know before your session?"
+                placeholder={t("booking.commentsPlaceholder")}
                 value={form.comments}
                 onChange={(e) => setForm({ ...form, comments: e.target.value })}
               />
@@ -366,9 +375,9 @@ function BookPage() {
                 className="mt-0.5"
               />
               <span>
-                I accept the{" "}
+                {t("booking.acceptCancellationPre")}{" "}
                 <Link to="/legal/cancellation" className="text-primary underline underline-offset-2">
-                  cancellation policy
+                  {t("booking.cancellationLink")}
                 </Link>
                 . {data.settings.cancellation_policy}
               </span>
@@ -380,23 +389,23 @@ function BookPage() {
                 className="mt-0.5"
               />
               <span>
-                I accept the{" "}
+                {t("booking.acceptPrivacyPre")}{" "}
                 <Link to="/legal/privacy" className="text-primary underline underline-offset-2">
-                  privacy policy
+                  {t("booking.privacyLink")}
                 </Link>{" "}
-                and agree that my details are used to manage this booking.
+                {t("booking.acceptPrivacyPost")}
               </span>
             </label>
 
             <div className="mt-4 flex justify-between gap-3">
               <Button type="button" variant="ghost" className="rounded-full" onClick={() => go(1)}>
-                <ChevronLeft className="mr-1 h-4 w-4" aria-hidden="true" /> Back
+                <ChevronLeft className="mr-1 h-4 w-4" aria-hidden="true" /> {t("common.back")}
               </Button>
               <Button type="submit" className="rounded-full px-7" disabled={mutation.isPending}>
                 {mutation.isPending ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                 ) : null}
-                Confirm booking
+                {t("booking.confirm")}
               </Button>
             </div>
           </form>
@@ -409,20 +418,20 @@ function BookPage() {
             <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <Check className="h-7 w-7" aria-hidden="true" />
             </span>
-            <h2 className="mt-6 font-display text-3xl text-primary-deep">Booking confirmed</h2>
+            <h2 className="mt-6 font-display text-3xl text-primary-deep">{t("booking.confirmed")}</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Your reference is <span className="font-medium text-primary">{result.reference}</span>
+              {t("booking.referenceIs")} <span className="font-medium text-primary">{result.reference}</span>
             </p>
 
             <div className="mx-auto mt-8 max-w-sm space-y-2 rounded-2xl border border-border bg-card p-5 text-left text-sm text-muted-foreground">
               <p className="font-display text-xl text-primary-deep">{service.name}</p>
               <p className="flex items-center gap-2">
                 <CalendarDays className="h-4 w-4 text-sage" aria-hidden="true" />
-                {formatIsoDate(date)} · {time}
+                {formatDateIn(date, language)} · {time}
               </p>
               <p className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-sage" aria-hidden="true" />
-                {formatDuration(service.duration_minutes)}
+                {formatDurationIn(service.duration_minutes, language)}
               </p>
               <p className="flex items-center gap-2 font-medium text-primary">
                 <Euro className="h-4 w-4 text-sage" aria-hidden="true" />
@@ -434,7 +443,7 @@ function BookPage() {
             </div>
 
             <p className="mt-6 text-sm text-muted-foreground">
-              Save your personal booking link to cancel or reschedule later.
+              {t("booking.saveLink")}
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               <Button
@@ -443,10 +452,10 @@ function BookPage() {
                   navigate({ to: "/booking/$token", params: { token: result.manageToken } })
                 }
               >
-                Manage my booking
+                {t("booking.manage")}
               </Button>
               <Button asChild variant="outline" className="rounded-full border-primary/30 px-6">
-                <Link to="/">Back to home</Link>
+                <Link to="/">{t("common.backHome")}</Link>
               </Button>
             </div>
           </CardContent>
@@ -465,17 +474,18 @@ function SummaryBar({
   service: { name: string; duration_minutes: number; price_cents: number };
   currency: string;
   date?: string;
-  time?: string;
+  time?: string | null;
 }) {
+  const { language } = useI18n();
   return (
     <div className="rounded-2xl border border-border bg-secondary/60 p-5">
       <p className="font-display text-xl text-primary-deep">{service.name}</p>
       <p className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
-        <span>{formatDuration(service.duration_minutes)}</span>
+        <span>{formatDurationIn(service.duration_minutes, language)}</span>
         <span className="font-medium text-primary">{formatPrice(service.price_cents, currency)}</span>
         {date && time ? (
           <span>
-            {formatIsoDate(date)} · {time}
+            {formatDateIn(date, language)} · {time}
           </span>
         ) : null}
       </p>

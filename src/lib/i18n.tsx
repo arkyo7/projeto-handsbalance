@@ -143,9 +143,9 @@ const en = {
   "page.contact.title": "Contact",
 
   "footer.tagline": "A calm and supportive space focused on professional massage therapy in Gent.",
-  "footer.navigation": "Navigation",
-  "footer.legal": "Legal",
-  "footer.contact": "Contact",
+  "footer.legalTitle": "Legal",
+  "footer.navTitle": "Navigation",
+  "footer.contactTitle": "Contact",
   "footer.privacy": "Privacy Policy",
   "footer.terms": "Terms and Conditions",
   "footer.cancellation": "Cancellation Policy",
@@ -376,9 +376,9 @@ const pt: Dict = {
 
   "footer.tagline":
     "Um espaço calmo e acolhedor dedicado à massagem terapêutica profissional em Gent.",
-  "footer.navigation": "Navegação",
-  "footer.legal": "Legal",
-  "footer.contact": "Contacto",
+  "footer.navTitle": "Navegação",
+  "footer.legalTitle": "Jurídico",
+  "footer.contactTitle": "Contacto",
   "footer.privacy": "Política de Privacidade",
   "footer.terms": "Termos e Condições",
   "footer.cancellation": "Política de Cancelamento",
@@ -606,9 +606,9 @@ const fr: Dict = {
 
   "footer.tagline":
     "Un espace calme et bienveillant dédié à la massothérapie professionnelle à Gand.",
-  "footer.navigation": "Navigation",
-  "footer.legal": "Mentions légales",
-  "footer.contact": "Contact",
+  "footer.navTitle": "Navigation",
+  "footer.legalTitle": "Mentions Légales",
+  "footer.contactTitle": "Contact",
   "footer.privacy": "Politique de confidentialité",
   "footer.terms": "Conditions générales",
   "footer.cancellation": "Politique d’annulation",
@@ -840,16 +840,16 @@ const nl: Dict = {
 
   "footer.tagline":
     "Een rustige en zorgzame plek gewijd aan professionele massagetherapie in Gent.",
-  "footer.navigation": "Navigatie",
-  "footer.legal": "Juridisch",
-  "footer.contact": "Contact",
+  "footer.navTitle": "Navigatie",
+  "footer.legalTitle": "Juridisch",
+  "footer.contactTitle": "Contact",
   "footer.privacy": "Privacybeleid",
   "footer.terms": "Algemene voorwaarden",
   "footer.cancellation": "Annuleringsbeleid",
   "footer.cookies": "Cookiebeleid",
   "footer.rights": "Alle rechten voorbehouden.",
   "footer.disclaimer":
-    "Massagetherapie is een welzijnsdienst en vervangt geen medische, kinesitherapeutische of psychologische zorg.",
+    "Massagetherapie is een welzijnsdienst en vervangt geen medische, fysiotherapeutische of psychologische zorg.",
 
   "cookie.label": "Cookievoorkeuren",
   "cookie.text":
@@ -1015,14 +1015,14 @@ export function formatDatePartIn(
 }
 
 /** Reads a translated field from an admin-managed row, falling back to English. */
-export function translated<T extends { translations?: unknown }>(
+export function translated<T extends object>(
   row: T,
   field: string,
   language: LanguageCode,
   fallback: string | null | undefined,
 ): string {
   if (language === "en") return fallback ?? "";
-  const all = row.translations as Record<string, Record<string, string>> | null | undefined;
+  const all = (row as any).translations as Record<string, Record<string, string>> | null | undefined;
   const value = all?.[language]?.[field];
   return (value && value.trim()) || fallback || "";
 }
@@ -1031,8 +1031,8 @@ type I18nValue = {
   language: LanguageCode;
   locale: string;
   setLanguage: (code: LanguageCode) => void;
-  t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
-  tr: <T extends { translations?: unknown }>(
+  t: (key: any, vars?: Record<string, string | number>) => string;
+  tr: <T extends object>(
     row: T,
     field: string,
     fallback: string | null | undefined,
@@ -1063,10 +1063,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const t = useCallback(
-    (key: TranslationKey, vars?: Record<string, string | number>) => {
-      const raw = dictionaries[language][key] ?? en[key];
+    (key: any, vars?: Record<string, string | number>) => {
+      const raw = (dictionaries[language] as any)[key] ?? (en as any)[key];
+      if (!raw) return key;
       if (!vars) return raw;
-      return raw.replace(/\{(\w+)\}/g, (_, name: string) =>
+      return raw.replace(/\{(\w+)\}/g, (_: string, name: string) =>
         vars[name] === undefined ? `{${name}}` : String(vars[name]),
       );
     },
@@ -1098,7 +1099,7 @@ export function useI18n() {
 }
 
 /** Keeps <title> and the meta description in sync with the selected language. */
-export function useLocalizedMeta(titleKey: TranslationKey, descriptionKey: TranslationKey) {
+export function useLocalizedMeta(titleKey: any, descriptionKey: any) {
   const { t, language } = useI18n();
   useEffect(() => {
     document.title = t(titleKey);

@@ -31,7 +31,7 @@ export function Footer() {
 
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-primary-deep">
-            Navigation
+            {t("footer.navTitle")}
           </h2>
           <ul className="mt-4 space-y-2.5 text-sm">
             {NAV_LINKS.map((l) => (
@@ -45,7 +45,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-primary-deep">Legal</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-primary-deep">{t("footer.legalTitle")}</h2>
           <ul className="mt-4 space-y-2.5 text-sm">
             {legalLinks.map((l) => (
               <li key={l.to}>
@@ -58,7 +58,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-primary-deep">Contact</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-primary-deep">{t("footer.contactTitle")}</h2>
           <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
             <li className="flex gap-2.5">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-sage" aria-hidden="true" />
@@ -101,8 +101,7 @@ export function Footer() {
             © {year} {BUSINESS.name}. {t("footer.rights")}
           </p>
           <p>
-            Massage therapy is a well-being service and does not replace medical, physiotherapeutic or
-            psychological care.
+            {t("footer.disclaimer")}
           </p>
         </div>
       </div>

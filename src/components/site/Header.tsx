@@ -74,7 +74,7 @@ export function Header() {
               activeOptions={{ exact: link.to === "/" }}
               activeProps={{ className: "bg-secondary text-primary-deep" }}
             >
-              {t(link.key)}
+              {t(link.key as any)}
             </Link>
           ))}
         </nav>
@@ -103,7 +103,7 @@ export function Header() {
                     activeOptions={{ exact: link.to === "/" }}
                     activeProps={{ className: "bg-secondary text-primary-deep" }}
                   >
-                    {t(link.key)}
+                    {t(link.key as any)}
                   </Link>
                 ))}
                 <Button asChild className="mt-4 h-12 rounded-full text-base">
