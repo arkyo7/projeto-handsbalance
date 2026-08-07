@@ -17,6 +17,8 @@ import { createBooking, getAvailability } from "@/lib/public.functions";
 import { BUSINESS, formatDuration, formatIsoDate, formatPrice } from "@/lib/site";
 import { useI18n, type LanguageCode } from "@/lib/i18n";
 
+// Meta tags are now handled dynamically by useLocalizedMeta in the component or i18n helper if needed, 
+// but we keep these as fallbacks.
 const title = "Book a Massage Session Online | Hands & Balance Gent";
 const description =
   "Choose your massage session, pick a date and time and confirm your booking online at Hands & Balance Wellness Center in Gent.";
@@ -51,15 +53,23 @@ function nextDays(count: number) {
   });
 }
 
-const STEPS = ["Session", "Date & time", "Your details", "Confirmation"];
+// Labels are now handled via t() keys: booking.step.*
 
 function Stepper({ step }: { step: number }) {
+  const { t } = useI18n();
+  const steps = [
+    { key: "booking.step.service", label: t("booking.step.service") },
+    { key: "booking.step.datetime", label: t("booking.step.datetime") },
+    { key: "booking.step.details", label: t("booking.step.details") },
+    { key: "booking.step.confirmation", label: t("booking.step.confirmation") },
+  ];
+
   return (
     <ol className="mb-10 grid grid-cols-4 gap-2">
-      {STEPS.map((label, i) => {
+      {steps.map((s, i) => {
         const state = i < step ? "done" : i === step ? "current" : "todo";
         return (
-          <li key={label} className="flex flex-col gap-2">
+          <li key={s.key} className="flex flex-col gap-2">
             <span
               className={`h-1.5 w-full rounded-full ${
                 state === "todo" ? "bg-border" : "bg-primary"
@@ -70,7 +80,7 @@ function Stepper({ step }: { step: number }) {
                 state === "current" ? "font-medium text-primary-deep" : "text-muted-foreground"
               }`}
             >
-              {label}
+              {s.label}
             </span>
           </li>
         );
@@ -145,11 +155,11 @@ function BookPage() {
 
   const submit = () => {
     if (!service || !date || !time) return;
-    if (form.fullName.trim().length < 2) return toast.error("Please enter your full name.");
-    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return toast.error("Please enter a valid email address.");
-    if (form.phone.trim().length < 5) return toast.error("Please enter a valid phone number.");
+    if (form.fullName.trim().length < 2) return toast.error(t("booking.errName"));
+    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return toast.error(t("booking.errEmail"));
+    if (form.phone.trim().length < 5) return toast.error(t("booking.errPhone"));
     if (!form.acceptCancellation || !form.acceptPrivacy)
-      return toast.error("Please accept the cancellation and privacy policies.");
+      return toast.error(t("booking.errAccept"));
 
     mutation.mutate({
       serviceId: service.id,
@@ -168,9 +178,9 @@ function BookPage() {
 
   return (
     <div className="container-page max-w-3xl py-12 sm:py-16">
-      <h1 className="font-display text-4xl text-primary-deep sm:text-5xl">Book Your Session</h1>
+      <h1 className="font-display text-4xl text-primary-deep sm:text-5xl">{t("booking.title")}</h1>
       <p className="mt-3 text-sm text-muted-foreground">
-        All times are shown in local time ({BUSINESS.timezone.replace("_", " ")}).
+        {t("booking.timezone", { tz: BUSINESS.timezone.replace("_", " ") })}
       </p>
 
       <div className="mt-10">
@@ -215,7 +225,7 @@ function BookPage() {
         <div>
           <SummaryBar service={service} currency={data.settings.currency} />
 
-          <h2 className="mt-8 font-display text-2xl text-primary-deep">Choose a date</h2>
+          <h2 className="mt-8 font-display text-2xl text-primary-deep">{t("booking.chooseDate")}</h2>
           <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
             {days.map((d) => {
               const dt = new Date(`${d}T00:00:00`);
