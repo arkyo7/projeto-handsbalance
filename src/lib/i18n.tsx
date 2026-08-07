@@ -1015,14 +1015,14 @@ export function formatDatePartIn(
 }
 
 /** Reads a translated field from an admin-managed row, falling back to English. */
-export function translated<T extends { translations?: any }>(
+export function translated<T extends object>(
   row: T,
   field: string,
   language: LanguageCode,
   fallback: string | null | undefined,
 ): string {
   if (language === "en") return fallback ?? "";
-  const all = row.translations as Record<string, Record<string, string>> | null | undefined;
+  const all = (row as any).translations as Record<string, Record<string, string>> | null | undefined;
   const value = all?.[language]?.[field];
   return (value && value.trim()) || fallback || "";
 }
@@ -1032,7 +1032,7 @@ type I18nValue = {
   locale: string;
   setLanguage: (code: LanguageCode) => void;
   t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
-  tr: <T extends { translations?: any }>(
+  tr: <T extends object>(
     row: T,
     field: string,
     fallback: string | null | undefined,

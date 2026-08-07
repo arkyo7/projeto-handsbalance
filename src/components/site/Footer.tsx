@@ -16,6 +16,7 @@ export function Footer() {
   const { t } = useI18n();
   const year = new Date().getFullYear();
 
+  const { t } = useI18n();
   return (
     <footer className="mt-24 border-t border-border bg-secondary/60">
       <div className="container-page grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
