@@ -1015,7 +1015,7 @@ export function formatDatePartIn(
 }
 
 /** Reads a translated field from an admin-managed row, falling back to English. */
-export function translated<T extends { translations?: unknown }>(
+export function translated<T extends { translations?: any }>(
   row: T,
   field: string,
   language: LanguageCode,
@@ -1032,7 +1032,7 @@ type I18nValue = {
   locale: string;
   setLanguage: (code: LanguageCode) => void;
   t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
-  tr: <T extends { translations?: unknown }>(
+  tr: <T extends { translations?: any }>(
     row: T,
     field: string,
     fallback: string | null | undefined,
