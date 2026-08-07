@@ -19,7 +19,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cancelBooking, getAvailability, getBooking, rescheduleBooking } from "@/lib/public.functions";
-import { BUSINESS, formatDuration, formatIsoDate, formatPrice, shortTime } from "@/lib/site";
+import { BUSINESS, formatPrice, shortTime } from "@/lib/site";
+import { useI18n, formatDateIn, formatDurationIn, LOCALE_BY_LANGUAGE } from "@/lib/i18n";
 
 export const Route = createFileRoute("/booking/$token")({
   head: () => ({
@@ -51,6 +52,7 @@ function nextDays(count: number) {
 }
 
 function ManageBookingPage() {
+  const { language, t } = useI18n();
   const { token } = Route.useParams();
   const queryClient = useQueryClient();
   const [rescheduling, setRescheduling] = useState(false);
@@ -69,7 +71,7 @@ function ManageBookingPage() {
   const cancelMutation = useMutation({
     mutationFn: () => cancelFn({ data: { token } }),
     onSuccess: () => {
-      toast.success("Your booking has been cancelled.");
+      toast.success(t("manage.cancelledToast"));
       queryClient.invalidateQueries({ queryKey: ["booking", token] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -79,7 +81,7 @@ function ManageBookingPage() {
     mutationFn: (payload: { date: string; startTime: string }) =>
       rescheduleFn({ data: { token, ...payload } }),
     onSuccess: () => {
-      toast.success("Your booking has been moved.");
+      toast.success(t("manage.movedToast"));
       setRescheduling(false);
       setDate(null);
       queryClient.invalidateQueries({ queryKey: ["booking", token] });
@@ -90,7 +92,7 @@ function ManageBookingPage() {
   if (bookingQuery.isLoading) {
     return (
       <div className="container-page flex max-w-2xl items-center gap-2 py-24 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Loading your booking…
+        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> {t("manage.loading")}
       </div>
     );
   }
@@ -98,9 +100,9 @@ function ManageBookingPage() {
   if (!booking) {
     return (
       <div className="container-page max-w-2xl py-24 text-center">
-        <h1 className="font-display text-3xl text-primary-deep">Booking link not valid</h1>
+        <h1 className="font-display text-3xl text-primary-deep">{t("manage.invalidTitle")}</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          This link is invalid or has expired. Please contact us and we will help you directly.
+          {t("manage.invalidText")}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Button asChild className="rounded-full px-6">
@@ -118,20 +120,20 @@ function ManageBookingPage() {
 
   return (
     <div className="container-page max-w-2xl py-14 sm:py-20">
-      <h1 className="font-display text-4xl text-primary-deep sm:text-5xl">Your Booking</h1>
-      <p className="mt-3 text-sm text-muted-foreground">Reference {booking.reference}</p>
+      <h1 className="font-display text-4xl text-primary-deep sm:text-5xl">{t("manage.title")}</h1>
+      <p className="mt-3 text-sm text-muted-foreground">{t("manage.reference", { ref: booking.reference })}</p>
 
       <Card className="mt-8 border-border bg-card shadow-soft">
         <CardContent className="space-y-3 p-7 text-sm text-muted-foreground">
           <p className="font-display text-2xl text-primary-deep">{booking.service_name}</p>
           <p className="flex items-center gap-2">
             <CalendarDays className="h-4 w-4 text-sage" aria-hidden="true" />
-            {formatIsoDate(booking.appointment_date)} · {shortTime(booking.start_time)}–
+            {formatDateIn(booking.appointment_date, language)} · {shortTime(booking.start_time)}–
             {shortTime(booking.end_time)}
           </p>
           <p className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-sage" aria-hidden="true" />
-            {formatDuration(booking.duration_minutes)}
+            {formatDurationIn(booking.duration_minutes, language)}
           </p>
           <p className="flex items-center gap-2 font-medium text-primary">
             <Euro className="h-4 w-4 text-sage" aria-hidden="true" />
@@ -141,7 +143,7 @@ function ManageBookingPage() {
             {BUSINESS.addressLine1}, {BUSINESS.postalCode} {BUSINESS.city}
           </p>
           <p className="pt-2">
-            Status:{" "}
+            {t("manage.status")}{" "}
             <span className={cancelled ? "text-destructive" : "font-medium text-primary-deep"}>
               {booking.status.replace("_", " ")}
             </span>
@@ -161,26 +163,26 @@ function ManageBookingPage() {
               className="rounded-full border-primary/30 px-6"
               onClick={() => setRescheduling((v) => !v)}
             >
-              {rescheduling ? "Close reschedule" : "Reschedule"}
+              {rescheduling ? t("manage.closeReschedule") : t("manage.reschedule")}
             </Button>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" className="rounded-full px-6">
-                  Cancel booking
+                  {t("manage.cancel")}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Cancel this booking?</AlertDialogTitle>
+                  <AlertDialogTitle>{t("manage.cancelTitle")}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This cannot be undone. You can always make a new booking afterwards.
+                    {t("manage.cancelDesc")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Keep booking</AlertDialogCancel>
+                  <AlertDialogCancel>{t("manage.keep")}</AlertDialogCancel>
                   <AlertDialogAction onClick={() => cancelMutation.mutate()}>
-                    Yes, cancel
+                    {t("manage.yesCancel")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -195,23 +197,25 @@ function ManageBookingPage() {
               pending={rescheduleMutation.isPending}
               onConfirm={(d, t) => rescheduleMutation.mutate({ date: d, startTime: t })}
               token={token}
+              language={language}
+              t={t}
             />
           ) : null}
         </div>
       ) : (
         <p className="mt-8 text-sm text-muted-foreground">
           {cancelled
-            ? "This booking has been cancelled."
-            : "This booking can no longer be changed online. Please contact us directly and we will help you."}
+            ? t("manage.wasCancelled")
+            : t("manage.locked")}
         </p>
       )}
 
       <div className="mt-10 flex flex-wrap gap-2">
         <Button asChild variant="outline" className="rounded-full border-primary/30 px-6">
-          <a href={BUSINESS.phoneHref}>Call {BUSINESS.phoneDisplay}</a>
+          <a href={BUSINESS.phoneHref}>{t("common.callPhone", { phone: BUSINESS.phoneDisplay })}</a>
         </Button>
         <Button asChild variant="ghost" className="rounded-full px-6">
-          <Link to="/">Back to home</Link>
+          <Link to="/">{t("common.backHome")}</Link>
         </Button>
       </div>
     </div>
@@ -225,6 +229,8 @@ function ReschedulePanel({
   pending,
   onConfirm,
   token,
+  language,
+  t,
 }: {
   days: string[];
   date: string | null;
@@ -232,6 +238,8 @@ function ReschedulePanel({
   pending: boolean;
   onConfirm: (date: string, time: string) => void;
   token: string;
+  language: any;
+  t: any;
 }) {
   const [time, setTime] = useState<string | null>(null);
   const getBookingFn = useServerFn(getBooking);
@@ -252,7 +260,7 @@ function ReschedulePanel({
 
   return (
     <div className="rounded-2xl border border-border bg-secondary/50 p-6">
-      <h2 className="font-display text-2xl text-primary-deep">Pick a new date</h2>
+      <h2 className="font-display text-2xl text-primary-deep">{t("manage.pickNewDate")}</h2>
       <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
         {days.map((d) => {
           const dt = new Date(`${d}T00:00:00`);
@@ -272,11 +280,11 @@ function ReschedulePanel({
               }`}
             >
               <span className="text-[0.7rem] uppercase tracking-wide opacity-80">
-                {dt.toLocaleDateString("en-GB", { weekday: "short" })}
+                {dt.toLocaleDateString(LOCALE_BY_LANGUAGE[language], { weekday: "short" })}
               </span>
               <span className="font-display text-xl">{dt.getDate()}</span>
               <span className="text-[0.7rem] opacity-80">
-                {dt.toLocaleDateString("en-GB", { month: "short" })}
+                {dt.toLocaleDateString(LOCALE_BY_LANGUAGE[language], { month: "short" })}
               </span>
             </button>
           );
@@ -286,7 +294,7 @@ function ReschedulePanel({
       {date ? (
         slots.isLoading ? (
           <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Checking availability…
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> {t("booking.checking")}
           </p>
         ) : slots.data && slots.data.slots.length > 0 ? (
           <div className="mt-4 grid grid-cols-3 gap-2.5 sm:grid-cols-5">
@@ -307,7 +315,7 @@ function ReschedulePanel({
           </div>
         ) : (
           <p className="mt-4 text-sm text-muted-foreground">
-            No availability on this day. Please choose another date.
+            {t("manage.noAvailability")}
           </p>
         )
       ) : null}
@@ -318,7 +326,7 @@ function ReschedulePanel({
         onClick={() => date && time && onConfirm(date, time)}
       >
         {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
-        Confirm new time
+        {t("manage.confirmNewTime")}
       </Button>
     </div>
   );
