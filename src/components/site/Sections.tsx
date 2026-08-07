@@ -33,13 +33,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, formatDurationIn, translated } from "@/lib/i18n";
 import {
   BUSINESS,
   INFO_SOON,
   MAPS_URL,
   PLACEHOLDER_NOTICE,
-  formatDuration,
   formatPrice,
 } from "@/lib/site";
 import type { PublicSiteData } from "@/lib/booking.server";
@@ -206,7 +205,7 @@ export function TrustBar() {
 }
 
 export function ServiceCard({ service, currency }: { service: Service; currency: string }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [open, setOpen] = useState(false);
 
   return (
@@ -214,15 +213,15 @@ export function ServiceCard({ service, currency }: { service: Service; currency:
       <CardContent className="flex flex-1 flex-col p-6">
         {service.is_featured ? (
           <Badge variant="secondary" className="mb-3 w-fit rounded-full text-[0.68rem] tracking-wide">
-            Featured
+            {t("services.featured")}
           </Badge>
         ) : null}
-        <h3 className="font-display text-2xl leading-snug text-primary-deep">{service.name}</h3>
+        <h3 className="font-display text-2xl leading-snug text-primary-deep">{translated(service, language, "name")}</h3>
 
         <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Clock className="h-4 w-4 text-sage" aria-hidden="true" />
-            {formatDuration(service.duration_minutes)}
+            {formatDurationIn(service.duration_minutes, language)}
           </span>
           <span className="flex items-center gap-1.5 font-medium text-primary">
             <Euro className="h-4 w-4 text-sage" aria-hidden="true" />
@@ -231,7 +230,7 @@ export function ServiceCard({ service, currency }: { service: Service; currency:
         </div>
 
         <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
-          {service.description || INFO_SOON}
+          {translated(service, language, "description") || t("common.infoSoon")}
         </p>
 
         <div className="mt-6 flex flex-wrap gap-2">
@@ -244,21 +243,21 @@ export function ServiceCard({ service, currency }: { service: Service; currency:
             <DialogContent className="max-w-lg">
               <DialogHeader>
                 <DialogTitle className="font-display text-2xl text-primary-deep">
-                  {service.name}
+                  {translated(service, language, "name")}
                 </DialogTitle>
                 <DialogDescription className="flex flex-wrap gap-x-4 gap-y-1 pt-1 text-sm">
-                  <span>{formatDuration(service.duration_minutes)}</span>
+                  <span>{formatDurationIn(service.duration_minutes, language)}</span>
                   <span className="font-medium text-primary">
                     {formatPrice(service.price_cents, currency)}
                   </span>
                 </DialogDescription>
               </DialogHeader>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                {service.description || INFO_SOON}
+                {translated(service, language, "description") || t("common.infoSoon")}
               </p>
               {service.notes ? (
                 <p className="rounded-xl bg-secondary/70 p-4 text-sm leading-relaxed text-muted-foreground">
-                  {service.notes}
+                  {translated(service, language, "notes")}
                 </p>
               ) : null}
               {service.is_bookable ? (
@@ -269,7 +268,7 @@ export function ServiceCard({ service, currency }: { service: Service; currency:
                 </Button>
               ) : (
                 <p className="mt-2 rounded-xl bg-accent/60 p-4 text-sm text-primary-deep">
-                  Online booking for this option is not available yet. Please contact us for details.
+                  {t("services.notBookable")}
                 </p>
               )}
             </DialogContent>
@@ -303,7 +302,7 @@ export function ServicesSection({ data }: { data: PublicSiteData }) {
 }
 
 export function AboutSection({ data }: { data: PublicSiteData }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const values = [
     { icon: HandHeart, label: t("about.value1") },
     { icon: Sparkles, label: t("about.value2") },
@@ -324,9 +323,9 @@ export function AboutSection({ data }: { data: PublicSiteData }) {
         />
 
         <div>
-          <SectionHeading align="left" eyebrow="About" title={t("about.title")} />
+          <SectionHeading align="left" eyebrow={t("about.eyebrow")} title={t("about.title")} />
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-            {data.settings.about_text || INFO_SOON}
+            {translated(data.settings, language, "about_text") || t("common.infoSoon")}
           </p>
 
           <ul className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -343,11 +342,11 @@ export function AboutSection({ data }: { data: PublicSiteData }) {
 
           {data.settings.practitioner_bio ? (
             <p className="mt-8 text-sm leading-relaxed text-muted-foreground">
-              {data.settings.practitioner_bio}
+              {translated(data.settings, language, "practitioner_bio")}
             </p>
           ) : (
             <p className="mt-8 rounded-2xl border border-dashed border-primary/25 bg-background/60 p-4 text-sm text-muted-foreground">
-              Practitioner profile, languages and qualifications: {INFO_SOON}
+              {t("about.practitionerSoon")}
             </p>
           )}
         </div>
@@ -357,7 +356,7 @@ export function AboutSection({ data }: { data: PublicSiteData }) {
 }
 
 export function GallerySection({ data }: { data: PublicSiteData }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [active, setActive] = useState<number | null>(null);
   const images = data.gallery;
 
@@ -367,7 +366,7 @@ export function GallerySection({ data }: { data: PublicSiteData }) {
       {images.length === 0 ? (
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {[0, 1, 2].map((i) => (
-            <ImagePlaceholder key={i} className="aspect-[4/3]" label="Official photo to be added." />
+            <ImagePlaceholder key={i} className="aspect-[4/3]" label={t("gallery.empty")} />
           ))}
         </div>
       ) : (
@@ -381,7 +380,7 @@ export function GallerySection({ data }: { data: PublicSiteData }) {
             >
               <img
                 src={img.image_url}
-                alt={img.alt_text || "Hands & Balance Wellness Center"}
+                alt={translated(img, language, "alt_text") || "Hands & Balance Wellness Center"}
                 loading="lazy"
                 width={800}
                 height={600}
@@ -394,11 +393,11 @@ export function GallerySection({ data }: { data: PublicSiteData }) {
 
       <Dialog open={active !== null} onOpenChange={(o) => !o && setActive(null)}>
         <DialogContent className="max-w-3xl p-2">
-          <DialogTitle className="sr-only">Gallery image</DialogTitle>
+          <DialogTitle className="sr-only">{t("gallery.lightbox")}</DialogTitle>
           {active !== null && images[active] ? (
             <img
               src={images[active].image_url}
-              alt={images[active].alt_text || "Hands & Balance Wellness Center"}
+              alt={translated(images[active], language, "alt_text") || "Hands & Balance Wellness Center"}
               className="h-auto w-full rounded-xl"
             />
           ) : null}
@@ -409,7 +408,7 @@ export function GallerySection({ data }: { data: PublicSiteData }) {
 }
 
 export function ReviewsSection({ data }: { data: PublicSiteData }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   return (
     <Section tone="cream" id="reviews">
       <SectionHeading title={t("reviews.title")} />
@@ -420,7 +419,7 @@ export function ReviewsSection({ data }: { data: PublicSiteData }) {
           ))}
         </span>
         <span>
-          {BUSINESS.ratingValue} · {BUSINESS.reviewCount} reviews
+          {t("reviews.summary", { rating: BUSINESS.ratingValue, count: BUSINESS.reviewCount })}
         </span>
       </div>
 
@@ -428,7 +427,7 @@ export function ReviewsSection({ data }: { data: PublicSiteData }) {
         {data.reviews.map((review) => (
           <Card key={review.id} className="h-full border-border/80 bg-card shadow-soft">
             <CardContent className="flex h-full flex-col p-6">
-              <span className="flex" aria-label={`${review.rating} out of 5`}>
+              <span className="flex" aria-label={t("reviews.stars", { rating: review.rating })}>
                 {Array.from({ length: review.rating }).map((_, i) => (
                   <Star key={i} className="h-4 w-4 fill-sage text-sage" aria-hidden="true" />
                 ))}
@@ -456,22 +455,22 @@ export function ReviewsSection({ data }: { data: PublicSiteData }) {
 }
 
 export function GiftCardSection({ data }: { data: PublicSiteData }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const gift = data.services.find((s) => s.slug === "gift-card");
 
   return (
     <Section id="gift-card">
       <div className="grid items-center gap-10 rounded-3xl border border-border bg-secondary/60 p-8 shadow-soft sm:p-12 lg:grid-cols-2">
         <div>
-          <SectionHeading align="left" eyebrow="Gift Card" title={t("gift.title")} description={t("gift.sub")} />
+          <SectionHeading align="left" eyebrow={t("gift.eyebrow")} title={t("gift.title")} description={t("gift.sub")} />
           {gift ? (
             <p className="mt-6 font-display text-4xl text-primary">
               {formatPrice(gift.price_cents, data.settings.currency)}
             </p>
           ) : null}
           <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-            {data.settings.gift_card_rules ||
-              "Validity, included session and delivery options: " + INFO_SOON}
+            {translated(data.settings, language, "gift_card_rules") ||
+              t("gift.rulesSoon")}
           </p>
           <Button asChild size="lg" className="mt-8 h-12 rounded-full px-7">
             <Link to="/contact">{t("cta.buyGiftCard")}</Link>
@@ -494,9 +493,9 @@ export function GiftCardSection({ data }: { data: PublicSiteData }) {
 export function HowItWorks() {
   const { t } = useI18n();
   const steps = [
-    { title: t("how.step1"), text: "Browse the available sessions and pick the one that fits your needs." },
-    { title: t("how.step2"), text: "Pick an available day and time in the online calendar." },
-    { title: t("how.step3"), text: "Share your details, review the summary and confirm your reservation." },
+    { title: t("how.step1"), text: t("how.step1Text") },
+    { title: t("how.step2"), text: t("how.step2Text") },
+    { title: t("how.step3"), text: t("how.step3Text") },
   ];
 
   return (
