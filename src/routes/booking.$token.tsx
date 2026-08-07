@@ -106,10 +106,10 @@ function ManageBookingPage() {
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Button asChild className="rounded-full px-6">
-            <a href={BUSINESS.phoneHref}>Call {BUSINESS.phoneDisplay}</a>
+            <a href={BUSINESS.phoneHref}>{t("common.callPhone", { phone: BUSINESS.phoneDisplay })}</a>
           </Button>
           <Button asChild variant="outline" className="rounded-full border-primary/30 px-6">
-            <Link to="/">Back to home</Link>
+            <Link to="/">{t("common.backHome")}</Link>
           </Button>
         </div>
       </div>
@@ -239,7 +239,7 @@ function ReschedulePanel({
   onConfirm: (date: string, time: string) => void;
   token: string;
   language: any;
-  t: any;
+  t: (key: any, params?: any) => string;
 }) {
   const [time, setTime] = useState<string | null>(null);
   const getBookingFn = useServerFn(getBooking);
