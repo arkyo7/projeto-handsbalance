@@ -1,6 +1,8 @@
 /** Static, owner-confirmed business facts. Anything not listed here must come
  *  from the admin panel (business_settings) or stay "Information coming soon." */
 
+import { type TranslationKey } from "./i18n";
+
 export const BUSINESS = {
   name: "Hands & Balance Wellness Center",
   shortName: "Hands & Balance",
@@ -30,12 +32,12 @@ export const WHATSAPP_DEFAULT_MESSAGE =
   "Hello, I found Hands & Balance Wellness Center through the website and would like more information.";
 
 export const NAV_LINKS = [
-  { to: "/", key: "nav.home" },
-  { to: "/services", key: "nav.services" },
-  { to: "/about", key: "nav.about" },
-  { to: "/gallery", key: "nav.gallery" },
-  { to: "/reviews", key: "nav.reviews" },
-  { to: "/contact", key: "nav.contact" },
+  { to: "/", key: "nav.home" as TranslationKey },
+  { to: "/services", key: "nav.services" as TranslationKey },
+  { to: "/about", key: "nav.about" as TranslationKey },
+  { to: "/gallery", key: "nav.gallery" as TranslationKey },
+  { to: "/reviews", key: "nav.reviews" as TranslationKey },
+  { to: "/contact", key: "nav.contact" as TranslationKey },
 ] as const;
 
 export const PLACEHOLDER_NOTICE = "Professional image to be added.";

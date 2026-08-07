@@ -143,9 +143,9 @@ const en = {
   "page.contact.title": "Contact",
 
   "footer.tagline": "A calm and supportive space focused on professional massage therapy in Gent.",
-  "footer.navigation": "Navigation",
-  "footer.legal": "Legal",
-  "footer.contact": "Contact",
+  "footer.legalTitle": "Legal",
+  "footer.navTitle": "Navigation",
+  "footer.contactTitle": "Contact",
   "footer.privacy": "Privacy Policy",
   "footer.terms": "Terms and Conditions",
   "footer.cancellation": "Cancellation Policy",
@@ -376,9 +376,8 @@ const pt: Dict = {
 
   "footer.tagline":
     "Um espaço calmo e acolhedor dedicado à massagem terapêutica profissional em Gent.",
-  "footer.navigation": "Navegação",
-  "footer.legalTitle": "Jurídico",
   "footer.navTitle": "Navegação",
+  "footer.legalTitle": "Jurídico",
   "footer.contactTitle": "Contacto",
   "footer.privacy": "Política de Privacidade",
   "footer.terms": "Termos e Condições",
@@ -607,9 +606,9 @@ const fr: Dict = {
 
   "footer.tagline":
     "Un espace calme et bienveillant dédié à la massothérapie professionnelle à Gand.",
-  "footer.navigation": "Navigation",
-  "footer.legal": "Mentions légales",
-  "footer.contact": "Contact",
+  "footer.navTitle": "Navigation",
+  "footer.legalTitle": "Mentions Légales",
+  "footer.contactTitle": "Contact",
   "footer.privacy": "Politique de confidentialité",
   "footer.terms": "Conditions générales",
   "footer.cancellation": "Politique d’annulation",
