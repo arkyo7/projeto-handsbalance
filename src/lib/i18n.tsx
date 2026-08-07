@@ -8,17 +8,6 @@ import {
   type ReactNode,
 } from "react";
 
-type FooterKey =
-  | "footer.legalTitle"
-  | "footer.navTitle"
-  | "footer.contactTitle"
-  | "footer.privacy"
-  | "footer.terms"
-  | "footer.cancellation"
-  | "footer.cookies"
-  | "footer.rights"
-  | "footer.disclaimer";
-
 export const LANGUAGES = [
   { code: "en", label: "English", short: "EN" },
   { code: "nl", label: "Nederlands", short: "NL" },
@@ -1075,9 +1064,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const t = useCallback(
     (key: any, vars?: Record<string, string | number>) => {
-      const raw = dictionaries[language][key] ?? en[key];
+      const raw = (dictionaries[language] as any)[key] ?? (en as any)[key];
+      if (!raw) return key;
       if (!vars) return raw;
-      return raw.replace(/\{(\w+)\}/g, (_, name: string) =>
+      return raw.replace(/\{(\w+)\}/g, (_: string, name: string) =>
         vars[name] === undefined ? `{${name}}` : String(vars[name]),
       );
     },
