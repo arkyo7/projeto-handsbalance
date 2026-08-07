@@ -1043,6 +1043,27 @@ type I18nValue = {
   formatPrice: (cents: number, currency?: string) => string;
 };
 
+/** Safe fallback so components never crash when rendered outside the provider
+ *  (error boundaries, not-found screens, isolated remounts during HMR). */
+const fallbackI18n: I18nValue = {
+  language: "en",
+  locale: LOCALE_BY_LANGUAGE.en,
+  setLanguage: () => {},
+  t: ((key: any, vars?: Record<string, string | number>) => {
+    const raw = (en as any)[key];
+    if (!raw) return key;
+    if (!vars) return raw;
+    return raw.replace(/\{(\w+)\}/g, (_: string, name: string) =>
+      vars[name] === undefined ? `{${name}}` : String(vars[name]),
+    );
+  }) as I18nValue["t"],
+  tr: (row, field, fallback) => translated(row, field, "en", fallback),
+  formatDate: (iso) => formatDateIn(iso, "en"),
+  formatDatePart: (iso, options) => formatDatePartIn(iso, "en", options),
+  formatDuration: (minutes) => formatDurationIn(minutes, "en"),
+  formatPrice: (cents, currency = "EUR") => formatPriceIn(cents, "en", currency),
+};
+
 const I18nContext = createContext<I18nValue | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
